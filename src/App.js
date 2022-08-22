@@ -1,41 +1,53 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+//importar las rutas a utilizar
 import routes from "./config/routes";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { Navbar } from "./components";
 import { logoutWs } from "./services/auth-ws";
-import { Modal } from "antd";
-// importar los componentes o funciones que sean globales
-
+import { Modal } from 'antd'
+//importar los componentes o funcion  que sean globales
 function App() {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate()
+
   //funciones globales!
   function authentication(user) {
     setUser(user);
   }
   function handleLogout() {
     Modal.confirm({
-      title: "Cerrar sesion",
-      content: "Estas sqeguro de lo que vas hacer?",
-      onOk() {
+      title:"Cerrar sesión",
+      content:"Estas seguro de lo que vas hacer?",
+      onOk(){
+        //ejeuctar el endpoint para hacer logout y borrar al usuario del state!
         logoutWs().then((res) => {
           const { data, status, errorMessage } = res;
+    
           if (status) {
-            alert(data.successMessage);
+            Modal.success({
+              content:data.successMessage,
+            });
+            navigate('/')
             setUser(null);
           } else {
             alert(errorMessage);
           }
         });
-      },
-    });
-    // ejecutar el endpoint para hacer logout y borrar al usuario del state!
-  }
+      }
+    })
 
+  }
   return (
     <div className="App">
-      <Navbar user={user} handleLogout={handleLogout} />
+      <Navbar
+        user={user}
+        handleLogout={handleLogout} 
+        
+        /* {...{user,handleLogout}} */
+      />
       <Routes>
+        {/*(route,index)=> <Route key={path} path={path} element={element} />  */}
         {routes({ user, handleLogout, authentication }).map(
           ({ path, element }, index_route) => (
             <Route key={path} {...{ path, element }} />

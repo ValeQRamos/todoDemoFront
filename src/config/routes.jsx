@@ -1,22 +1,26 @@
-// importar mis pages;
-import AuthPage from "../pages/AuthPage" //import chafa v1
-import Signup from "../pages/Signup"
+//importar mis pages
+import {AuthPage, ProfilePage} from '../pages'
+const routes = (props)=>{
 
-const routes = (props) => {
-  // <Rout path='/' element={componente}
-  return [{
-    path:'/', //Homepage
-    element: <h1>Este esel home</h1>
-  },
-  {
-    path:'/signup',
-    element:<AuthPage {...props} />
-  },
-  {
-    path:'/login',
-    element:<AuthPage {...props} />
-  },
-]
+    //<Route path="/" element={componente} />
+    return [
+        {
+            path: "/", //Homepage
+            element:<h1>Este es el home</h1>
+        },
+        {
+            path:"/login",
+            element:<AuthPage {...props}/>
+        },
+        {
+            path:"/signup",
+            element:<AuthPage {...props}/>
+        },
+        {
+            path:'/profile',
+            element:<ProfilePage {...props} />
+        }
+    ]
 }
 
 export default routes

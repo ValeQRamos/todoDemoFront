@@ -5,21 +5,20 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-
-const Navbar = ({ user, handleLogout }) => (
+const Navbar = ({ user,handleLogout }) => (
   <Menu mode="horizontal" defaultSelectedKeys={["mail"]}>
-    { !user && <>
-      <Menu.Item key="auth" icon={<MailOutlined />}>
-        <Link to='/login' > Iniciar Sesion </Link> 
+    {!user && <>
+      <Menu.Item key="login" icon={<MailOutlined />}>
+        <Link to="/login">Iniciar Sesion </Link>
       </Menu.Item>
-      <Menu.Item>
-        <Link to='/signup'> Registrate </Link>
+      <Menu.Item key="signup">
+        <Link to="/signup">Registrate</Link>
       </Menu.Item>
     </>}
-    
 
-    {/* Debe ser Dinamico , le vamos a decir que se quite o se muestre dependiendeo en que estado este */}
-    {/* use && elemento a mostrar */}
+    {/* Debe ser dinamico le vamos a decir que se quiete o se muestre dependiendo en que estado este?  */}
+    {/* user ? resultado1 : resultado2 */}
+    {/* user && elemento a mostrar */}
     {user && (
       <Menu.SubMenu key="user" title="El usuario" icon={<SettingOutlined />}>
         <Menu.Item key="two" icon={<AppstoreOutlined />}>
@@ -33,7 +32,7 @@ const Navbar = ({ user, handleLogout }) => (
             Navigation Four
           </Menu.Item>
           <Menu.Item onClick={handleLogout} key="five" icon={<AppstoreOutlined />}>
-            Cerrar Sesion
+            cerrar sesion
           </Menu.Item>
         </Menu.ItemGroup>
       </Menu.SubMenu>

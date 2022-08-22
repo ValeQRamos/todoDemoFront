@@ -1,37 +1,62 @@
-import { Form } from "antd";
+import {  Form,Modal  } from "antd";
 import { FormItem } from "../components";
-import {Link, useLocation} from 'react-router-dom'
-
-// me traigo mis servicios ! LoginWS SignupWS
-import {loginWs, signupWs} from '../services/auth-ws'
-
+import { Link, useLocation, useNavigate } from "react-router-dom";
+//me traigo mis servicios!!! LoginWS SignupWS
+import { loginWs, signupWs } from '../services/auth-ws'
+/**
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 const AuthPage = (props) => {
-  // utilizo el hook useLocation
+  //utilizo el hook useLocation
   const location = useLocation()
+  const navigate = useNavigate()
 
   const onFinish = (values) => {
-    if(location.pathname === '/signup' && values.password !== values.confirmPassword){
-      return alert('hey que paso las contraseñas no coinciden')
+    if(location.pathname === "/signup" && values.password !== values.confirmPassword){
+      return Modal.error({content:"hey que paso las contraseñas no coinciden"})
     }
+    //forma dinamica 
+    const service = location.pathname === "/signup" ? signupWs(values) : loginWs(values)
 
-    const service = location.pathname === '/signup' ? signupWs(values) : loginWs(values)
 
-    service
-      .then(res =>{
-        const {data, status, errorMessage} = res
-        if(status){
-          console.log('data',data)
-          props.authentication(data.user)
-          alert('todo chido ya pudiste entrar')
-          return
-        } else{
-          alert(errorMessage)
-        }
-      })
+    service.then(res=>{
+      const {data,status,errorMessage} = res;
+      if(status){
+        console.log("data",data)
+        props.authentication(data.user)
+        Modal.success({content: "Todo chido ya pudiste entrar"})
+        navigate('/profile')
+        return;
+      }else{
+        //pueden guardar el errorMessage en un state para mostrarlo en el html 
+        Modal.error({content: errorMessage})
+      }
+    })
+  
   };
+
+  const onFinishAsync = async(values) => {
+    if(values.password !== values.confirmPassword){
+      return alert("hey que paso las contraseñas no coinciden")
+    }
+    try{
+      const {data} = await signupWs(values)
+      alert("Todo chido ya pudiste entrar")
+    }catch(error){
+      console.log(error)
+      alert("No se puede registrar")
+    }
+  }
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
+
+
+
   return (
     <Form
       name="basic"
@@ -45,18 +70,23 @@ const AuthPage = (props) => {
       onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
-      { location.pathname === '/signup' && <FormItem 
-        label="Nombre" 
-        name="firstName" 
-        type="text" 
-      />}
-      { location.pathname === '/signup' && <FormItem
-        label="Apellido(s)" 
-        name="lastName" 
-        type="text" 
-      />}
+      {/* con mas de dos elementos */}
+      {location.pathname === "/signup" ?
+      <>
+        <FormItem
+          label="Nombre"
+          name="firstName"
+          type="text"
+        />
+        <FormItem
+          label="Apellido(s)"
+          name="lastName"
+          type="text"
+        /> 
+      </> : null}
+      {/* {location.pathname === "/signup" &&} */}
       <FormItem
-        label="Email"
+        label="Correo"
         name="email"
         type="text"
         rules={[
@@ -67,46 +97,46 @@ const AuthPage = (props) => {
         ]}
       />
       <FormItem
-        label="Password"
+        label="Contraseña"
         name="password"
         type="password"
         rules={[
           {
             required: true,
-            message: "Porfavor ingresa tu contraseña",
+            message: "Por favor ingresa tu contraseña!",
           },
         ]}
       />
-      { location.pathname === '/signup' && <FormItem
+      {/* && */}
+      {location.pathname === "/signup" && <FormItem
         label="Confirma tu contraseña"
         name="confirmPassword"
         type="password"
         rules={[
           {
             required: true,
-            message: "Ingresa tu confirmacion de contraseña!",
+            message: "Por favor ingresa tu confirmacion de contraseña!",
           },
         ]}
-      />}
+      />
+      }
       <FormItem
-        button_text="Guardar"
+        button_text="enviar"
         type="button"
         wrapperCol={{
           offset: 8,
           span: 16,
         }}
+      
       />
-      {/*<Button type="primary" htmlType="submit">
-          Submit
-      </Button>*/}
-      {location.pathname === '/signup' ?
-        <p>Si ya tienes cuenta <Link to='/login'> ingresa! </Link> </p>
-        :
-        <p>Si aun no tienes cuenta <Link to='/signup'> registrate! </Link> </p>
+      {location.pathname === "/signup" ?
+        <p> Si ya tienes cuenta <Link to="/login">ingresa!</Link></p>
+      :
+      <p> Si aun no tienes cuenta <Link to="/signup">registrate!</Link></p>
       }
       
-
     </Form>
   );
 };
+
 export default AuthPage;

@@ -17,7 +17,6 @@ const renderItem = (props) => {
   switch (props.type) {
     case "password":
       return <Input.Password />;
-
     case "button":
       return (
         <Button type="primary" htmlType="submit">
